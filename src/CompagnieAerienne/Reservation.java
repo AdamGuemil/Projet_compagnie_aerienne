@@ -1,27 +1,32 @@
 package CompagnieAerienne;
 
 public class Reservation {
-    private Passager passager;
-    //vol
-    //SiegeReserve
-    String dateReservation;
-    boolean resaValidee;
+    public NumeroReservation numR;
+    public NumeroVol numV;
+    public int DateReservation;
+    public int numeroSiege;
 
-    public Reservation(Passager passager){
-        this.passager = passager;
+    public Reservation(NumeroVol numV,NumeroReservation numR){
+        numR.r = this;
+        this.numR = numR;
+        this.numV = numV;
     }
 
-    public static Reservation Creer(Passager passager){
-        return new Reservation(passager);
-    }
-
-    public static void Supprimer(Reservation[] reservations, Reservation reservation){
-        // vol etcetc
-        /*for (int i = 0; i<reservations.length; i++){
-            if (reservations[i] == reservation) {
-                reservations[i] == null;
+    public static boolean CheckReservation(Reservation[] listeReservations, int id){
+        for (int i=0;i<listeReservations.length;i++){
+            if (listeReservations[i].numR.id == id){
+                return true;
             }
-        }*/
-        return;
+        }
+        return false;
+    }
+
+    public static NumeroReservation getNumeroReservation(Reservation[] listeReservations, int id){
+        for (int i=0;i<listeReservations.length;i++){
+            if (listeReservations[i].numR.id == id){
+                return listeReservations[i].numR;
+            }
+        }
+        return null;
     }
 }

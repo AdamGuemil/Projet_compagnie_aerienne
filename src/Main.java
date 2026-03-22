@@ -1,9 +1,20 @@
+import CompagnieAerienne.*;
+import Commandes.*;
+
+
 void main() {
 
-    IO.println(String.format("Hello and welcome!"));
+    Compagnie comp = new Compagnie();
+    do {
+        System.out.println("==============================================");
+        System.out.println("==Bienvenue dans le terminal de la compagnie==");
+        System.out.println("==============================================");
+        System.out.println(" ");
 
-    for (int i = 1; i <= 5; i++) {
+        System.out.println("Entrez une commande, ou entrez \"help\" pour de l'aide.");
+        Scanner sc = new Scanner(System.in);
+        String command = sc.nextLine();
+        Commande.processCommand(command, comp);
 
-        IO.println("test i = " + i);
-    }
+    }while(true);
 }
