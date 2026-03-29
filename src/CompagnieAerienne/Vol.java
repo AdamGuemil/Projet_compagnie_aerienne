@@ -1,13 +1,17 @@
 package CompagnieAerienne;
 
+import java.util.List;
+import java.util.Scanner;
+
 public class Vol {
     static int nbVols;
     public NumeroVol numeroVol;
     private String villeDepart;
     private String villeDestination;
     private double dateDepart;
-    private int placesDisponibles;
+    private Sieges[] placesDisponibles;
     private Avion avion;
+    public Reservation reservation;
 
     public Vol(NumeroVol numeroVol,  String villeDepart, String villeDestination, double dateDepart, Avion avion){
         this.numeroVol = numeroVol;
@@ -24,10 +28,15 @@ public class Vol {
         return numeroVol +  villeDepart + villeDestination + dateDepart + avion;
     }
 
-    public static boolean reserverPlace(){
+    public Reservation reserverPlace(int placesDisponibles, Reservation[] listeReservations, NumeroReservation numR, NumeroVol numV){
+        reservation = new Reservation(numV, numR);
 
-        int placesDisponibles;
-        return true;
+        for (int i = 0; i < placesDisponibles; i++) {
+            placesDisponibles--;
+            //listeReservations.add(reservation); // Permet d'ajouter une reservation a la liste de reservation
+        }
+
+        return null;
     }
 
     public static boolean checkVol(Vol[] listeVols, int id){ // regarde si vol existe

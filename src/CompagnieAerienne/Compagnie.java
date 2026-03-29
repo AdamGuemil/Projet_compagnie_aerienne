@@ -5,6 +5,7 @@ public class Compagnie {
     private Reservation[] listeReservations;
     private Avion[] listeAvions;
     private Passager[] listePassagers;
+    private Sieges[] listeSieges;
 
 
     public Compagnie() {
@@ -24,7 +25,7 @@ public class Compagnie {
 
         for (int i = 0; i < listeAvions.length; i++) {
             if (listeAvions[i] == null ) {
-                //listeAvions[i] = new Avion(id,modele,capacite,anneeService);
+                listeAvions[i] = new Avion(id, listeSieges, modele,capacite,anneeService);
                 System.out.println("avion bien ajoute à la liste");
                 return;
             }
@@ -41,12 +42,25 @@ public class Compagnie {
         }
     }
 
-    public void AjouterVol() {
+    public void AjouterVol(int id, NumeroVol numV) {
         // faire comme avion, mais pas oublier de créer numéroVol en meme temps
+        for (int i = 0; i < listeVols.length; i++){
+            if(listeVols[i].numeroVol.id == id) {
+                listeVols[i] = null;
+                //listeReservations[i] = new Reservation(listeVols, listeReservations);
+                System.out.println("vol bien ajoute à la liste");
+            }
+        }
     }
 
-    public void SupprimerVol() {
-
+    public void SupprimerVol(int id) {
+        for (int i = 0; i < listeVols.length; i++) {
+            if (listeVols[i].numeroVol.id == id ) {
+                listeVols[i] = null;
+                System.out.println("vol bien supprimé de la liste");
+                return;
+            }
+        }
     }
 
     public boolean AjouterReservation(NumeroVol numVol,NumeroReservation numReservation) {

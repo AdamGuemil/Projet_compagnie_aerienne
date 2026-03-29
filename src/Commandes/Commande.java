@@ -127,7 +127,7 @@ public class Commande {
                 // TODO check si l'avion existe...
                 break;
             }while (true);
-            comp.AjouterVol(); // TODO pas encore implémenté
+            //comp.AjouterVol(int id); // TODO pas encore implémenté
             return "Vol créé";
 
 
@@ -141,7 +141,7 @@ public class Commande {
                 break;
             }while (true);
 
-            comp.SupprimerVol(); // TODO pas encore implémenté
+            //comp.SupprimerVol(); // TODO pas encore implémenté
         }
         return "pb";
     }

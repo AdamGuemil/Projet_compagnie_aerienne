@@ -1,4 +1,10 @@
+//TODO faudrait rajouter import java.time.LocalDate pour pouvoir un systeme de resa qui se calle avec l'heure et la date
+
 package CompagnieAerienne;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Reservation {
     public NumeroReservation numR;
@@ -28,5 +34,15 @@ public class Reservation {
             }
         }
         return null;
+    }
+
+    public static int MakeReservation(){
+        Scanner mySeat = new Scanner(System.in);
+        System.out.println("Veuillez reserver une place, s'il-vous-plait");// Dans notre cas, on considere qu'on reserve une place aleatorie
+
+        int seatTaken = mySeat.nextInt(); //Lit la valeur prise par l'utilisateur
+
+        System.out.println("Merci, votre reservation a bien ete prise en compte.");
+        return 0;
     }
 }
