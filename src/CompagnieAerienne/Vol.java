@@ -41,7 +41,7 @@ public class Vol {
 
     public static boolean checkVol(Vol[] listeVols, int id){ // regarde si vol existe
         for (int i=0;i<listeVols.length;i++){
-            if (listeVols[i].numeroVol.id == id){
+            if (listeVols[i] != null && listeVols[i].numeroVol.id == id){
                 return true;
             }
         }

@@ -11,9 +11,16 @@ public class Passager {
         return "a";
     }
 
+    public Passager(String p,String n, String N,int nP){
+        prenom = p;
+        nom = n;
+        Nationalite = N;
+        numeroPasseport = nP;
+    }
+
     public static boolean checkPassager(Passager[] listePassagers, int id){ // regarde si passager existe
         for (int i=0;i<listePassagers.length;i++){
-            if (listePassagers[i].numeroPasseport == id){
+            if (listePassagers[i] !=null && listePassagers[i].numeroPasseport == id){
                 return true;
             }
         }

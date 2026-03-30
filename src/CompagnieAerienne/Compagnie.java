@@ -7,12 +7,15 @@ public class Compagnie {
     private Passager[] listePassagers;
     private Sieges[] listeSieges;
 
+    public String[] listeNationalitesPossibles = {"FRA","UK","USA"};
+
+
 
     public Compagnie() {
         listeVols         = new Vol[999];
         listeReservations = new Reservation[999];
         listeAvions       = new Avion[999];
-        //listePassagers    = new Passager[999];
+        listePassagers    = new Passager[999];
     }
 
     public void AjouterAvion(int id, String modele,int capacite, int anneeService) {
@@ -102,6 +105,16 @@ public class Compagnie {
             }
         }
         return false;
+    }
+
+    public void AjouterPassager(String p,String n, String N,int nP) {
+
+        for (int i = 0; i < listePassagers.length; i++) {
+            if (listePassagers[i] == null ) {
+                listePassagers[i] = new Passager(p,n,N,nP);
+                return;
+            }
+        }
     }
 
     public Vol[] getListeVols(){
