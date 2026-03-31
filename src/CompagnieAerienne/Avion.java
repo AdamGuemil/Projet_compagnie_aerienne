@@ -1,18 +1,41 @@
 package CompagnieAerienne;
 
+import java.io.Serial;
+
 public class Avion {
     public int id;
-    public Sieges[] nbSieges;
+    public Sieges[] listeSieges;
     public String modele;
     public int capacite;
-    public int anneeService;
 
-    public Avion(int id, Sieges[] nbSieges, String modele, int capacite, int anneeService){
+    public Avion(int id, String modele, int capacite){
         this.id = id;
-        this.nbSieges = nbSieges;
         this.modele = modele;
         this.capacite = capacite;
-        this.anneeService = anneeService;
+        listeSieges = new Sieges[capacite];
+        int num =0;
+        for (int i = 0; i < listeSieges.length; i++) {
+            listeSieges[i] = new Sieges(num++);
+        }
+    }
+
+    public static boolean CheckAvion(Avion[] listeAvions, int id){
+
+        for (int i=0;i<listeAvions.length;i++){
+            if (listeAvions[i]!=null && listeAvions[i].id == id){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Avion getAvionFromId(Avion[] listeAvions, int id){
+        for (int i=0;i<listeAvions.length;i++){
+            if (listeAvions[i].id == id){
+                return listeAvions[i];
+            }
+        }
+        return null;
     }
 
     public static void afficherDetails(int id, int nbSieges, String modele, int capacite, int anneeService){

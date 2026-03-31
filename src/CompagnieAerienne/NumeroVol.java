@@ -9,13 +9,13 @@ public class NumeroVol {
     public NumeroVol(Vol vol){
         id = nbId++;
         this.vol = vol;
+        this.reservations = new Reservation[this.vol.avion.capacite];
     }
 
     public void AjouterReservationAuVol(Reservation reservation){
         for (int i = 0; i<reservations.length;i++){
             if (reservations[i] == null){
                 this.reservations[i] = reservation;
-
             }
         }
     }
@@ -24,7 +24,6 @@ public class NumeroVol {
         for (int i = 0; i<reservations.length;i++){
             if (reservations[i] == reservation){
                 this.reservations[i] = null;
-
             }
         }
     }

@@ -9,13 +9,15 @@ import java.util.Scanner;
 public class Reservation {
     public NumeroReservation numR;
     public NumeroVol numV;
+    Sieges SiegeReserve;
     public int DateReservation;
-    public int numeroSiege;
 
-    public Reservation(NumeroVol numV,NumeroReservation numR){
+    public Reservation(NumeroVol numV,NumeroReservation numR,Sieges SiegeReserve){
         numR.r = this;
         this.numR = numR;
         this.numV = numV;
+        SiegeReserve.reserveSiege();
+        this.SiegeReserve = SiegeReserve;
     }
 
     public static boolean CheckReservation(Reservation[] listeReservations, int id){

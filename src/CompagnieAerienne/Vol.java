@@ -9,34 +9,21 @@ public class Vol {
     private String villeDepart;
     private String villeDestination;
     private double dateDepart;
-    private Sieges[] placesDisponibles;
-    private Avion avion;
+    public Avion avion;
     public Reservation reservation;
 
-    public Vol(NumeroVol numeroVol,  String villeDepart, String villeDestination, double dateDepart, Avion avion){
-        this.numeroVol = numeroVol;
+    public Vol(String villeDepart, String villeDestination, double dateDepart, Avion avion){
         this.villeDepart = villeDepart;
         this.villeDestination= villeDestination;
         this.dateDepart = dateDepart;
-        this.placesDisponibles = avion.nbSieges;
         this.avion = avion;
+        this.numeroVol = new NumeroVol(this);
     }
 
 
     public static String afficherDetails(int numeroVol,  String villeDepart, String villeDestination, double dateDepart,Avion avion) {
         System.out.println("Voici les details du vol : ");
         return numeroVol +  villeDepart + villeDestination + dateDepart + avion;
-    }
-
-    public Reservation reserverPlace(int placesDisponibles, Reservation[] listeReservations, NumeroReservation numR, NumeroVol numV){
-        reservation = new Reservation(numV, numR);
-
-        for (int i = 0; i < placesDisponibles; i++) {
-            placesDisponibles--;
-            //listeReservations.add(reservation); // Permet d'ajouter une reservation a la liste de reservation
-        }
-
-        return null;
     }
 
     public static boolean checkVol(Vol[] listeVols, int id){ // regarde si vol existe
