@@ -20,12 +20,6 @@ public class Vol {
         this.numeroVol = new NumeroVol(this);
     }
 
-
-    public static String afficherDetails(int numeroVol,  String villeDepart, String villeDestination, double dateDepart,Avion avion) {
-        System.out.println("Voici les details du vol : ");
-        return numeroVol +  villeDepart + villeDestination + dateDepart + avion;
-    }
-
     public static boolean checkVol(Vol[] listeVols, int id){ // regarde si vol existe
         for (int i=0;i<listeVols.length;i++){
             if (listeVols[i] != null && listeVols[i].numeroVol.id == id){
@@ -42,6 +36,11 @@ public class Vol {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString(){
+        return "Numero de vol : " + numeroVol + ", la ville de depart : " + villeDepart + ", la ville de destination : " + villeDestination + "et la date de depart " + dateDepart;
     }
 
 }

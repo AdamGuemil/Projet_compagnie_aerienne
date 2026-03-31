@@ -4,17 +4,13 @@ public class Passager {
     protected String prenom;
     protected String nom;
     private int numeroPasseport;
-    private String Nationalite;
+    private String nationalite;
     public  NumeroReservation[] reservationsClient;
-
-    public String afficherDetails(){
-        return "a";
-    }
 
     public Passager(String p,String n, String N,int nP){
         prenom = p;
         nom = n;
-        Nationalite = N;
+        nationalite = N;
         numeroPasseport = nP;
     }
 
@@ -34,6 +30,11 @@ public class Passager {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString(){
+        return "Prenom : " + prenom + ", nom : " + nom + ", numero de passeport : " + numeroPasseport + ", nationalite : " + nationalite + "et la reservation client : " + reservationsClient;
     }
 
 }
