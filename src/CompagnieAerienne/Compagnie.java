@@ -17,7 +17,7 @@ public class Compagnie {
         listePassagers    = new Passager[999];
     }
 
-    public void AjouterAvion(int id, String modele,int capacite) {
+    public void ajouterAvion(int id, String modele,int capacite) {
         for (int i = 0; i < listeAvions.length; i++) {
             if (listeAvions[i]!=null && listeAvions[i].id == id) {
                 System.out.println("pb, avion existe deja dans la liste");
@@ -34,7 +34,7 @@ public class Compagnie {
         }
     }
 
-    public void SupprimerAvion(int id) {
+    public void supprimerAvion(int id) {
         for (int i = 0; i < listeAvions.length; i++) {
             if (listeAvions[i].id == id ) {
                 listeAvions[i] = null;
@@ -44,7 +44,7 @@ public class Compagnie {
         }
     }
 
-    public void AjouterVol(String vd, String va,double dd, Avion avion) {
+    public void ajouterVol(String vd, String va,double dd, Avion avion) {
         for (int i = 0; i < listeVols.length; i++){
             if(listeVols[i] == null) {
                 listeVols[i] = new Vol(vd,va,dd,avion);
@@ -54,7 +54,7 @@ public class Compagnie {
         }
     }
 
-    public void SupprimerVol(int id) {
+    public void supprimerVol(int id) {
         for (int i = 0; i < listeVols.length; i++) {
             if (listeVols[i].numeroVol.id == id ) {
                 listeVols[i] = null;
@@ -64,7 +64,7 @@ public class Compagnie {
         }
     }
 
-    public boolean AjouterReservation(NumeroVol numVol,NumeroReservation numReservation,Sieges siegeReserve) {
+    public boolean ajouterReservation(NumeroVol numVol,NumeroReservation numReservation,Sieges siegeReserve) {
         for (int i = 0; i < listeReservations.length; i++) {
             if (listeReservations[i] !=null && listeReservations[i].numR == numReservation) {
                 return false;
@@ -73,7 +73,7 @@ public class Compagnie {
 
         for (int i = 0; i < listeReservations.length; i++) {
             if (listeReservations[i] == null ) {
-                numVol.AjouterReservationAuVol(listeReservations[i]);
+                numVol.ajouterReservationAuVol(listeReservations[i]);
                 listeReservations[i] = new Reservation(numVol, numReservation, siegeReserve);
                 return true;
             }
@@ -81,7 +81,7 @@ public class Compagnie {
         return false;
     }
 
-    public boolean AnnulerReservation(NumeroReservation numReservation) {
+    public boolean annulerReservation(NumeroReservation numReservation) {
         for (int i = 0; i < numReservation.p.reservationsClient.length; i++) {
             if (numReservation.p.reservationsClient[i] == numReservation){
                 numReservation.p.reservationsClient[i] = null;
@@ -99,7 +99,7 @@ public class Compagnie {
 
         for (int i = 0; i < listeReservations.length; i++) {
             if (listeReservations[i].numR == numReservation){
-                listeReservations[i].numV.SupprimerReservationAuVol(listeReservations[i]);
+                listeReservations[i].numV.supprimerReservationAuVol(listeReservations[i]);
                 listeReservations[i] = null;
                 break;
             }
@@ -107,7 +107,7 @@ public class Compagnie {
         return false;
     }
 
-    public void AjouterPassager(String p,String n, String N,int nP) {
+    public void ajouterPassager(String p,String n, String N,int nP) {
 
         for (int i = 0; i < listePassagers.length; i++) {
             if (listePassagers[i] == null ) {

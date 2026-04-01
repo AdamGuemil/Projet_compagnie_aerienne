@@ -4,7 +4,7 @@ import CompagnieAerienne.*;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static CompagnieAerienne.Avion.CheckAvion;
+import static CompagnieAerienne.Avion.checkAvion;
 
 class CommandeAnnuleeException extends RuntimeException {
     public CommandeAnnuleeException() {
@@ -126,13 +126,13 @@ abstract public class Commande {
             do{
                 System.out.println("Entrez l'id de l'avion");
                 param3 = getIntInput();
-                if (Avion.CheckAvion(comp.getListeAvions(),param3)){
+                if (Avion.checkAvion(comp.getListeAvions(),param3)){
                     System.out.println("L'avion existe déjà, entrée un autre id ou annulez la commande");
                 }else {
                     break;
                 }
             }while (true);
-            comp.AjouterAvion(param3,param1,param2);
+            comp.ajouterAvion(param3,param1,param2);
             return "Vol créé";
 
 
@@ -145,7 +145,7 @@ abstract public class Commande {
                 break;
             }while (true);
 
-            comp.SupprimerVol(param3);
+            comp.supprimerVol(param3);
         } else if (Objects.equals(command, "list")){
               System.out.println("====================");
               System.out.println("==Liste des avions==");
@@ -162,7 +162,7 @@ abstract public class Commande {
                 break;
             }while (true);
 
-            comp.SupprimerVol(param3);
+            comp.supprimerVol(param3);
         } else if (Objects.equals(command, "modify")){
             do{
                 System.out.println("Entrez le numéro de vol");
@@ -171,7 +171,7 @@ abstract public class Commande {
                 break;
             }while (true);
 
-            comp.SupprimerVol(param3);
+            comp.supprimerVol(param3);
         }
         return "pb";
     }
@@ -221,7 +221,7 @@ abstract public class Commande {
 
             Sieges siege = Vol.getVol(comp.getListeVols(),param1).avion.listeSieges[param4];
             NumeroReservation numR = new NumeroReservation(Passager.getPassager(comp.getListePassagers(),param2), null);
-            comp.AjouterReservation(Vol.getVol(comp.getListeVols(),param1).numeroVol,numR,siege);
+            comp.ajouterReservation(Vol.getVol(comp.getListeVols(),param1).numeroVol,numR,siege);
             return "Réservation créée";
 
         } else if (Objects.equals(command, "delete")){
@@ -229,14 +229,14 @@ abstract public class Commande {
                 System.out.println("Entrez le numéro de réservation");
                 param1 = getIntInput();
 
-                if (Reservation.CheckReservation(comp.getListeReservations(),param1)) {
+                if (Reservation.checkReservation(comp.getListeReservations(),param1)) {
                     break;
                 }else{
                     System.out.println("Erreur : réservation inconnue, veuillez donner un identifiant valide ");
                 }
             } while(true);
 
-            comp.AnnulerReservation(Reservation.getNumeroReservation(comp.getListeReservations(),param1));
+            comp.annulerReservation(Reservation.getNumeroReservation(comp.getListeReservations(),param1));
             return "Réservation annulée";
 
         }
@@ -259,14 +259,14 @@ abstract public class Commande {
             do{
                 System.out.println("Entrez l'id de l'avion associé");
                 param3 = getIntInput();
-                if (Avion.CheckAvion(comp.getListeAvions(),param3)){
+                if (Avion.checkAvion(comp.getListeAvions(),param3)){
                     break;
                 }else {
                     System.out.println("L'identifiant entré est invalide");
                 }
             }while (true);
 
-            comp.AjouterVol(param1,param2,0101,Avion.getAvionFromId(comp.getListeAvions(),param3));
+            comp.ajouterVol(param1,param2,0101,Avion.getAvionFromId(comp.getListeAvions(),param3));
             return "Vol créé";
 
         } else if (Objects.equals(command, "delete")){
@@ -277,7 +277,7 @@ abstract public class Commande {
                 break;
             }while (true);
 
-            comp.SupprimerVol(param3);
+            comp.supprimerVol(param3);
         }
         return "pb";
     }
@@ -318,7 +318,7 @@ abstract public class Commande {
 
 
 
-            comp.AjouterPassager(param2,param3,param4,param1);
+            comp.ajouterPassager(param2,param3,param4,param1);
             return "Passager enregistré";
 
         } else if (Objects.equals(command, "delete")){
@@ -326,14 +326,14 @@ abstract public class Commande {
                 System.out.println("Entrez le numéro de réservation");
                 param1 = getIntInput();
 
-                if (Reservation.CheckReservation(comp.getListeReservations(),param1)) {
+                if (Reservation.checkReservation(comp.getListeReservations(),param1)) {
                     break;
                 }else{
                     System.out.println("Erreur : réservation inconnue, veuillez donner un identifiant valide ");
                 }
             } while(true);
 
-            comp.AnnulerReservation(Reservation.getNumeroReservation(comp.getListeReservations(),param1));
+            comp.annulerReservation(Reservation.getNumeroReservation(comp.getListeReservations(),param1));
             return "Réservation annulée";
 
         }

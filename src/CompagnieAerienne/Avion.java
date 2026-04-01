@@ -19,7 +19,7 @@ public class Avion {
         }
     }
 
-    public static boolean CheckAvion(Avion[] listeAvions, int id){
+    public static boolean checkAvion(Avion[] listeAvions, int id){
 
         for (int i=0;i<listeAvions.length;i++){
             if (listeAvions[i]!=null && listeAvions[i].id == id){

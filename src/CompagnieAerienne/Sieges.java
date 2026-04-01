@@ -27,8 +27,9 @@ public class Sieges {
     }
 
 
-    public static String afficherDetails(int numeroSiege, String classeSiege, String equipements) { //Affiche les details sur un siege selectionee
-        System.out.println("Voici les details du siege : ");
-        return numeroSiege + classeSiege + equipements;
+    //Modification de l'objet mere par defaut avec la methode toString() pour afficher les details du vol.
+    @Override
+    public String toString(){
+        return "Numero de siege : " + numeroSiege + "et statut de la place : " + reserve;
     }
 }

@@ -12,7 +12,7 @@ public class NumeroVol {
         this.reservations = new Reservation[this.vol.avion.capacite];
     }
 
-    public void AjouterReservationAuVol(Reservation reservation){
+    public void ajouterReservationAuVol(Reservation reservation){
         for (int i = 0; i<reservations.length;i++){
             if (reservations[i] == null){
                 this.reservations[i] = reservation;
@@ -20,7 +20,7 @@ public class NumeroVol {
         }
     }
 
-    public void SupprimerReservationAuVol(Reservation reservation){
+    public void supprimerReservationAuVol(Reservation reservation){
         for (int i = 0; i<reservations.length;i++){
             if (reservations[i] == reservation){
                 this.reservations[i] = null;

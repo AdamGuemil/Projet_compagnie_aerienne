@@ -20,7 +20,7 @@ public class Reservation {
         this.SiegeReserve = SiegeReserve;
     }
 
-    public static boolean CheckReservation(Reservation[] listeReservations, int id){
+    public static boolean checkReservation(Reservation[] listeReservations, int id){
         for (int i=0;i<listeReservations.length;i++){
             if (listeReservations[i].numR.id == id){
                 return true;
@@ -38,7 +38,7 @@ public class Reservation {
         return null;
     }
 
-    public static int MakeReservation(){
+    public static int makeReservation(){
         Scanner mySeat = new Scanner(System.in);
         System.out.println("Veuillez reserver une place, s'il-vous-plait");// Dans notre cas, on considere qu'on reserve une place aleatorie
 
