@@ -38,6 +38,7 @@ public class Avion {
         return null;
     }
 
+    //Modification de l'objet mere par defaut avec la methode toString() pour afficher les details de l'avion.
     @Override
     public String toString(){
         return "ID du vol : " + id + ", les sieges occupes : " + listeSieges + ", le modele de l'avion : " + modele + "et sa capacite totale : " +capacite;

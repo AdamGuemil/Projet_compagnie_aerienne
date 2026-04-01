@@ -38,6 +38,7 @@ public class Vol {
         return null;
     }
 
+    //Modification de l'objet mere par defaut avec la methode toString() pour afficher les details du vol.
     @Override
     public String toString(){
         return "Numero de vol : " + numeroVol + ", la ville de depart : " + villeDepart + ", la ville de destination : " + villeDestination + "et la date de depart " + dateDepart;

@@ -32,6 +32,7 @@ public class Passager {
         return null;
     }
 
+    //Modification de l'objet mere par defaut avec la methode toString() pour afficher les details du passager.
     @Override
     public String toString(){
         return "Prenom : " + prenom + ", nom : " + nom + ", numero de passeport : " + numeroPasseport + ", nationalite : " + nationalite + "et la reservation client : " + reservationsClient;
