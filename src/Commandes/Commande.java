@@ -1,342 +1,462 @@
 package Commandes;
+
 import CompagnieAerienne.*;
 
-import java.util.Objects;
 import java.util.Scanner;
 
-import static CompagnieAerienne.Avion.checkAvion;
-
 class CommandeAnnuleeException extends RuntimeException {
-    public CommandeAnnuleeException() {
-        super("Opération annulée par l'utilisateur.");
-    }
+    public CommandeAnnuleeException() { super("Opération annulée par l'utilisateur."); }
 }
 
 abstract public class Commande {
 
-    public static String processCommand(String command, Compagnie comp){
+    private static final Scanner sc = new Scanner(System.in);
 
+    public static String processCommand(String command, Compagnie comp) {
         String[] parts = command.trim().split("\\s+");
-        String key1 = parts[0].toLowerCase();
+        if (parts.length == 0 || parts[0].isEmpty()) return "";
 
+        String key1 = parts[0].toLowerCase();
         try {
             switch (key1) {
-                case "add":  return add(parts,comp);
-                case "delete":  return delete(parts,comp);
-                case "list":  return add(parts,comp);
-                case "show":  return delete(parts,comp);
-                case "modify":  return delete(parts,comp);
-                default:       return "Erreur : commande inconnue " + key1;
+                case "add":    return add(parts, comp);
+                case "delete": return delete(parts, comp);
+                case "list":   return list(parts, comp);
+                case "show":   return show(parts, comp);
+                case "modify": return modify(parts, comp);
+                case "help":   return showHelp();
+                default:       return "Commande inconnue : « " + key1 + " »  –  tapez help pour l'aide.";
             }
-        } catch (CommandeAnnuleeException exception){
-            return "Retour au menu";
+        } catch (CommandeAnnuleeException e) {
+            return "\n↩  Opération annulée – retour au menu.";
         }
     }
 
-    private static boolean checkExit(String command){
-
-        if (Objects.equals(command.trim().toLowerCase(), "exit")){
-            return true;
-        }
-        return false;
+    public static String showHelp() {
+        return """
+                ╔══════════════════════════════════════════════════════╗
+                ║              COMMANDES DISPONIBLES                  ║
+                ╠══════════════════════════════════════════════════════╣
+                ║  add    passager / vol / avion / reservation        ║
+                ║  delete passager / vol / avion / reservation        ║
+                ║  modify passager / vol / avion                      ║
+                ║  list   passagers / vols / avions / reservations    ║
+                ║  show   passager / vol / avion / reservation        ║
+                ║  help                                               ║
+                ╠══════════════════════════════════════════════════════╣
+                ║  Tapez « exit » à tout moment pour annuler          ║
+                ╚══════════════════════════════════════════════════════╝""";
     }
 
-    private static String getStringInput() {
-        Scanner sc = new Scanner(System.in);
+    private static String getStringInput(String prompt) {
+        System.out.print("  » " + prompt + " : ");
         String input = sc.nextLine().trim();
-        if (checkExit(input)) throw new CommandeAnnuleeException();
+        if (input.equalsIgnoreCase("exit")) throw new CommandeAnnuleeException();
         return input;
     }
 
-    private static int getIntInput() {
-        Scanner sc = new Scanner(System.in);
+    private static int getIntInput(String prompt) {
+        while (true) {
+            System.out.print("  » " + prompt + " : ");
+            String input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("exit")) throw new CommandeAnnuleeException();
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("  ⚠  Entrez un nombre entier valide.");
+            }
+        }
+    }
+
+    private static int getOptionalIntInput(String prompt) {
+        System.out.print("  » " + prompt + " : ");
         String input = sc.nextLine().trim();
-        if (checkExit(input)) throw new CommandeAnnuleeException();
-        return Integer.parseInt(input);
+        if (input.equalsIgnoreCase("exit")) throw new CommandeAnnuleeException();
+        if (input.isEmpty()) return -1;
+        try { return Integer.parseInt(input); } catch (NumberFormatException e) { return -1; }
     }
 
-    public static String add(String[] parts, Compagnie comp){
-        String key2 = parts[1].toLowerCase();
-
-        switch (key2) {
-            case "passager":  return comPassager(comp,"add");
-            case "vol":  return comVol(comp, "add");
-            case "avion":  return comAvion(comp, "add");
-            case "reservation":  return comReservation(comp, "add");
-
-            default:       return "Erreur : commande inconnue " + key2;
+    public static String add(String[] parts, Compagnie comp) {
+        if (parts.length < 2) return "Usage : add <passager|vol|avion|reservation>";
+        switch (parts[1].toLowerCase()) {
+            case "passager":    return comPassager(comp, "add");
+            case "vol":         return comVol(comp, "add");
+            case "avion":       return comAvion(comp, "add");
+            case "reservation": return comReservation(comp, "add");
+            default:            return "Type inconnu : « " + parts[1] + " »";
         }
     }
 
-
-    public static String list(String[] parts, Compagnie comp){
-        String key2 = parts[1].toLowerCase();
-
-
-        switch (key2) {
-            case "passagers":  return comPassager(comp,"list");
-            case "vols":  return comVol(comp, "list");
-            case "avions":  return comAvion(comp, "list");
-            case "reservations":  return comReservation(comp, "list");
-
-            default:       return "Erreur : commande inconnue " + key2;
+    public static String delete(String[] parts, Compagnie comp) {
+        if (parts.length < 2) return "Usage : delete <passager|vol|avion|reservation>";
+        switch (parts[1].toLowerCase()) {
+            case "passager":    return comPassager(comp, "delete");
+            case "vol":         return comVol(comp, "delete");
+            case "avion":       return comAvion(comp, "delete");
+            case "reservation": return comReservation(comp, "delete");
+            default:            return "Type inconnu : « " + parts[1] + " »";
         }
     }
 
-    public static String show(String[] parts, Compagnie comp){
-        String key2 = parts[1].toLowerCase();
-
-        switch (key2) {
-            case "passager": return comPassager(comp,"show");
-            case "vol":  return comVol(comp, "show");
-            case "avion":  return comAvion(comp, "show");
-            case "reservation":  return comReservation(comp, "show");
-
-            default:       return "Erreur : commande inconnue " + key2;
+    public static String list(String[] parts, Compagnie comp) {
+        if (parts.length < 2) return "Usage : list <passagers|vols|avions|reservations>";
+        switch (parts[1].toLowerCase()) {
+            case "passagers":    return comPassager(comp, "list");
+            case "vols":         return comVol(comp, "list");
+            case "avions":       return comAvion(comp, "list");
+            case "reservations": return comReservation(comp, "list");
+            default:             return "Type inconnu : « " + parts[1] + " »";
         }
     }
 
-
-    public static String delete(String[] parts, Compagnie comp){
-        String key2 = parts[1].toLowerCase();
-
-        switch (key2) {
-            case "passager":  return comPassager(comp,"delete");
-            case "vol":  return comVol(comp, "delete");
-            case "avion":  return comAvion(comp, "delete");
-            case "reservation":  return comReservation(comp, "delete");
-
-            default:       return "Erreur : commande inconnue " + key2;
+    public static String show(String[] parts, Compagnie comp) {
+        if (parts.length < 2) return "Usage : show <passager|vol|avion|reservation>";
+        switch (parts[1].toLowerCase()) {
+            case "passager":    return comPassager(comp, "show");
+            case "vol":         return comVol(comp, "show");
+            case "avion":       return comAvion(comp, "show");
+            case "reservation": return comReservation(comp, "show");
+            default:            return "Type inconnu : « " + parts[1] + " »";
         }
     }
 
-    public static String comAvion(Compagnie comp, String command){
-        String param1;
-        int param2;
-        int param3;
-
-        if (Objects.equals(command, "add")){
-
-            System.out.println("Entrez le modèle de l'avion");
-            param1 = getStringInput();
-
-            System.out.println("Entrez la capacité de l'avion");
-            param2 = getIntInput();
-
-            do{
-                System.out.println("Entrez l'id de l'avion");
-                param3 = getIntInput();
-                if (Avion.checkAvion(comp.getListeAvions(),param3)){
-                    System.out.println("L'avion existe déjà, entrée un autre id ou annulez la commande");
-                }else {
-                    break;
-                }
-            }while (true);
-            comp.ajouterAvion(param3,param1,param2);
-            return "Vol créé";
-
-
-
-        } else if (Objects.equals(command, "delete")){
-            do{
-                System.out.println("Entrez le numéro de vol");
-                param3 = getIntInput();
-                Vol.getVol(comp.getListeVols(),param3);
-                break;
-            }while (true);
-
-            comp.supprimerVol(param3);
-        } else if (Objects.equals(command, "list")){
-              System.out.println("====================");
-              System.out.println("==Liste des avions==");
-              System.out.println("====================");
-              for (int i = 0;i<comp.getListeAvions().length;i++){
-                  System.out.println(comp.getListeAvions()[i]);
-              }
-
-        } else if (Objects.equals(command, "show")){
-            do{
-                System.out.println("Entrez le numéro de vol");
-                param3 = getIntInput();
-                Vol.getVol(comp.getListeVols(),param3);
-                break;
-            }while (true);
-
-            comp.supprimerVol(param3);
-        } else if (Objects.equals(command, "modify")){
-            do{
-                System.out.println("Entrez le numéro de vol");
-                param3 = getIntInput();
-                Vol.getVol(comp.getListeVols(),param3);
-                break;
-            }while (true);
-
-            comp.supprimerVol(param3);
+    public static String modify(String[] parts, Compagnie comp) {
+        if (parts.length < 2) return "Usage : modify <passager|vol|avion>";
+        switch (parts[1].toLowerCase()) {
+            case "passager": return comPassager(comp, "modify");
+            case "vol":      return comVol(comp, "modify");
+            case "avion":    return comAvion(comp, "modify");
+            default:         return "Type inconnu : « " + parts[1] + " »";
         }
-        return "pb";
     }
 
-    public static String comReservation(Compagnie comp, String command){
+    public static String comAvion(Compagnie comp, String command) {
+        switch (command) {
 
-        int param1;
-        int param2;
-        String param3;
-        int param4;
+            case "add": {
+                System.out.println("\n── Ajout d'un avion ──────────────────────");
+                String modele    = getStringInput("Modèle");
+                int    capacite  = getIntInput("Capacité (nbre de sièges)");
+                int    annee     = getIntInput("Année de mise en service");
+                int    id;
+                do {
+                    id = getIntInput("ID de l'avion");
+                    if (!Avion.CheckAvion(comp.getListeAvions(), id)) break;
+                    System.out.println("  ⚠  Cet ID est déjà utilisé.");
+                } while (true);
+                comp.AjouterAvion(id, modele, capacite, annee);
+                return "✔  Avion ajouté (ID " + id + ").";
+            }
 
+            case "delete": {
+                System.out.println("\n── Suppression d'un avion ────────────────");
+                if (comp.getListeAvions().isEmpty()) return "Aucun avion enregistré.";
+                int id;
+                do {
+                    id = getIntInput("ID de l'avion à supprimer");
+                    if (Avion.CheckAvion(comp.getListeAvions(), id)) break;
+                    System.out.println("  ⚠  Avion introuvable.");
+                } while (true);
+                return comp.SupprimerAvion(id) ? "✔  Avion supprimé." : "✘  Suppression impossible.";
+            }
 
-        if (Objects.equals(command, "add")){
-            do {
-                System.out.println("Entrez le numéro de vol concerné par la reservation");
-                param1 = getIntInput();
+            case "modify": {
+                System.out.println("\n── Modification d'un avion ───────────────");
+                if (comp.getListeAvions().isEmpty()) return "Aucun avion enregistré.";
+                int id;
+                do {
+                    id = getIntInput("ID de l'avion à modifier");
+                    if (Avion.CheckAvion(comp.getListeAvions(), id)) break;
+                    System.out.println("  ⚠  Avion introuvable.");
+                } while (true);
+                Avion a = Avion.getAvionFromId(comp.getListeAvions(), id);
+                System.out.println("  (Entrée vide = conserver la valeur actuelle)");
+                String modele    = getStringInput("Modèle       [actuel : " + a.modele + "]");
+                int    capacite  = getOptionalIntInput("Capacité     [actuel : " + a.capacite + "]");
+                int    annee     = getOptionalIntInput("Année service[actuel : " + a.anneeService + "]");
+                comp.ModifierAvion(id,
+                        modele.isEmpty()    ? null : modele,
+                        capacite,
+                        annee);
+                return "✔  Avion modifié.";
+            }
 
-                if (Vol.checkVol(comp.getListeVols(),param1)) {
-                    break;
-                }else{
-                    System.out.println("Erreur : paramètre inconnu, veuillez donner un identifiant valide ");
-                }
-            } while(true);
+            case "list": {
+                if (comp.getListeAvions().isEmpty()) return "Aucun avion enregistré.";
+                StringBuilder sb = new StringBuilder("\n═══════════════════════════════\n  Liste des avions\n═══════════════════════════════\n");
+                for (Avion a : comp.getListeAvions()) sb.append("  ").append(a.afficherDetails()).append("\n");
+                return sb.toString();
+            }
 
-            do {
-                System.out.println("Entrez le numéro de passeport du passager concerné");
-                param2 = getIntInput();
+            case "show": {
+                System.out.println("\n── Détails d'un avion ────────────────────");
+                if (comp.getListeAvions().isEmpty()) return "Aucun avion enregistré.";
+                int id;
+                do {
+                    id = getIntInput("ID de l'avion");
+                    if (Avion.CheckAvion(comp.getListeAvions(), id)) break;
+                    System.out.println("  ⚠  Avion introuvable.");
+                } while (true);
+                Avion a = Avion.getAvionFromId(comp.getListeAvions(), id);
+                StringBuilder sb = new StringBuilder("\n  " + a.afficherDetails() + "\n  Sièges :\n");
+                for (Sieges s : a.listeSieges) sb.append("    ").append(s).append("\n");
+                return sb.toString();
+            }
+        }
+        return "Commande avion inconnue.";
+    }
 
-                if (Passager.checkPassager(comp.getListePassagers(),param2)) {
-                    break;
-                }else{
-                    System.out.println("Erreur : paramètre inconnu, veuillez donner un numéro de passeport valide, ou ajouter le passager dans la base de donnée s'il n'éxiste pas encore ");
-                    System.out.println("Voulez-vous ajouter un passager miantenant ? (Y/N)");
-                    param3 = getStringInput().toLowerCase();
-                    if (param3.equals("y")){
-                        comPassager(comp,"add");
+    public static String comVol(Compagnie comp, String command) {
+        switch (command) {
+
+            case "add": {
+                System.out.println("\n── Ajout d'un vol ────────────────────────");
+                if (comp.getListeAvions().isEmpty())
+                    return "✘  Aucun avion disponible – ajoutez d'abord un avion.";
+                String vd = getStringInput("Ville de départ");
+                String va = getStringInput("Ville de destination");
+                String dd = getStringInput("Date et heure de départ (ex: 12/07/2025 14:30)");
+                System.out.println("  Avions disponibles :");
+                for (Avion a : comp.getListeAvions()) System.out.println("    " + a.afficherDetails());
+                int avionId;
+                do {
+                    avionId = getIntInput("ID de l'avion associé");
+                    if (Avion.CheckAvion(comp.getListeAvions(), avionId)) break;
+                    System.out.println("  ⚠  Avion introuvable.");
+                } while (true);
+                comp.AjouterVol(vd, va, dd, Avion.getAvionFromId(comp.getListeAvions(), avionId));
+                return "✔  Vol créé.";
+            }
+
+            case "delete": {
+                System.out.println("\n── Suppression d'un vol ──────────────────");
+                if (comp.getListeVols().isEmpty()) return "Aucun vol enregistré.";
+                int id;
+                do {
+                    id = getIntInput("Numéro du vol à supprimer");
+                    if (Vol.checkVol(comp.getListeVols(), id)) break;
+                    System.out.println("  ⚠  Vol introuvable.");
+                } while (true);
+                return comp.SupprimerVol(id) ? "✔  Vol supprimé (réservations associées annulées)." : "✘  Suppression impossible.";
+            }
+
+            case "modify": {
+                System.out.println("\n── Modification d'un vol ─────────────────");
+                if (comp.getListeVols().isEmpty()) return "Aucun vol enregistré.";
+                int id;
+                do {
+                    id = getIntInput("Numéro du vol à modifier");
+                    if (Vol.checkVol(comp.getListeVols(), id)) break;
+                    System.out.println("  ⚠  Vol introuvable.");
+                } while (true);
+                Vol v = Vol.getVol(comp.getListeVols(), id);
+                System.out.println("  (Entrée vide = conserver la valeur actuelle)");
+                String vd = getStringInput("Ville de départ      [actuel : " + v.getVilleDepart() + "]");
+                String va = getStringInput("Ville de destination [actuel : " + v.getVilleDestination() + "]");
+                String dd = getStringInput("Date de départ       [actuel : " + v.getDateDepart() + "]");
+                comp.ModifierVol(id,
+                        vd.isEmpty() ? null : vd,
+                        va.isEmpty() ? null : va,
+                        dd.isEmpty() ? null : dd);
+                return "✔  Vol modifié.";
+            }
+
+            case "list": {
+                if (comp.getListeVols().isEmpty()) return "Aucun vol enregistré.";
+                StringBuilder sb = new StringBuilder("\n═══════════════════════════════\n  Liste des vols\n═══════════════════════════════\n");
+                for (Vol v : comp.getListeVols()) sb.append("  ").append(v.afficherDetails()).append("\n");
+                return sb.toString();
+            }
+
+            case "show": {
+                System.out.println("\n── Détails d'un vol ──────────────────────");
+                if (comp.getListeVols().isEmpty()) return "Aucun vol enregistré.";
+                int id;
+                do {
+                    id = getIntInput("Numéro du vol");
+                    if (Vol.checkVol(comp.getListeVols(), id)) break;
+                    System.out.println("  ⚠  Vol introuvable.");
+                } while (true);
+                Vol v = Vol.getVol(comp.getListeVols(), id);
+                StringBuilder sb = new StringBuilder("\n  " + v.afficherDetails() + "\n  Passagers embarqués :\n");
+                if (v.numeroVol.reservations.isEmpty()) {
+                    sb.append("    (aucun)\n");
+                } else {
+                    for (Reservation r : v.numeroVol.reservations) {
+                        sb.append(String.format("    - %s %s  |  Siège %d  |  Résa N°%d%n",
+                                r.numR.p.prenom, r.numR.p.nom,
+                                r.siegeReserve.getNumeroSiege(), r.numR.id));
                     }
                 }
-            } while(true);
-
-            do {
-                System.out.println("Entrez le numéro de siège à reserver");
-                //TODO print sieges dispo de l'avion du vol
-                param4 = getIntInput();
-                break;
-            } while(true);
-
-            Sieges siege = Vol.getVol(comp.getListeVols(),param1).avion.listeSieges[param4];
-            NumeroReservation numR = new NumeroReservation(Passager.getPassager(comp.getListePassagers(),param2), null);
-            comp.ajouterReservation(Vol.getVol(comp.getListeVols(),param1).numeroVol,numR,siege);
-            return "Réservation créée";
-
-        } else if (Objects.equals(command, "delete")){
-            do {
-                System.out.println("Entrez le numéro de réservation");
-                param1 = getIntInput();
-
-                if (Reservation.checkReservation(comp.getListeReservations(),param1)) {
-                    break;
-                }else{
-                    System.out.println("Erreur : réservation inconnue, veuillez donner un identifiant valide ");
-                }
-            } while(true);
-
-            comp.annulerReservation(Reservation.getNumeroReservation(comp.getListeReservations(),param1));
-            return "Réservation annulée";
-
+                return sb.toString();
+            }
         }
-        return "pb";
+        return "Commande vol inconnue.";
     }
 
-    public static String comVol(Compagnie comp, String command){
-        String param1;
-        String param2;
-        int param3;
+    public static String comPassager(Compagnie comp, String command) {
+        switch (command) {
 
-        if (Objects.equals(command, "add")){
+            case "add": {
+                System.out.println("\n── Ajout d'un passager ───────────────────");
+                int passport;
+                do {
+                    passport = getIntInput("Numéro de passeport");
+                    if (!Passager.checkPassager(comp.getListePassagers(), passport)) break;
+                    System.out.println("  ⚠  Ce numéro de passeport est déjà enregistré.");
+                } while (true);
+                String prenom = getStringInput("Prénom");
+                String nom    = getStringInput("Nom");
+                String natio  = getStringInput("Nationalité");
+                comp.AjouterPassager(prenom, nom, natio, passport);
+                return "✔  Passager enregistré.";
+            }
 
-            System.out.println("Entrez la ville de départ");
-            param1 = getStringInput();
+            case "delete": {
+                System.out.println("\n── Suppression d'un passager ─────────────");
+                if (comp.getListePassagers().isEmpty()) return "Aucun passager enregistré.";
+                int passport;
+                do {
+                    passport = getIntInput("Numéro de passeport du passager à supprimer");
+                    if (Passager.checkPassager(comp.getListePassagers(), passport)) break;
+                    System.out.println("  ⚠  Passager introuvable.");
+                } while (true);
+                return comp.SupprimerPassager(passport)
+                        ? "✔  Passager supprimé (réservations associées annulées)."
+                        : "✘  Suppression impossible.";
+            }
 
-            System.out.println("Entrez la ville d'arrivée");
-            param2 = getStringInput();
+            case "modify": {
+                System.out.println("\n── Modification d'un passager ────────────");
+                if (comp.getListePassagers().isEmpty()) return "Aucun passager enregistré.";
+                int passport;
+                do {
+                    passport = getIntInput("Numéro de passeport du passager");
+                    if (Passager.checkPassager(comp.getListePassagers(), passport)) break;
+                    System.out.println("  ⚠  Passager introuvable.");
+                } while (true);
+                Passager p = Passager.getPassager(comp.getListePassagers(), passport);
+                System.out.println("  (Entrée vide = conserver la valeur actuelle)");
+                String prenom = getStringInput("Prénom      [actuel : " + p.prenom + "]");
+                String nom    = getStringInput("Nom         [actuel : " + p.nom + "]");
+                String natio  = getStringInput("Nationalité [actuel : " + p.getNationalite() + "]");
+                comp.ModifierPassager(passport,
+                        prenom.isEmpty() ? null : prenom,
+                        nom.isEmpty()    ? null : nom,
+                        natio.isEmpty()  ? null : natio);
+                return "✔  Passager modifié.";
+            }
 
-            do{
-                System.out.println("Entrez l'id de l'avion associé");
-                param3 = getIntInput();
-                if (Avion.checkAvion(comp.getListeAvions(),param3)){
-                    break;
-                }else {
-                    System.out.println("L'identifiant entré est invalide");
+            case "list": {
+                if (comp.getListePassagers().isEmpty()) return "Aucun passager enregistré.";
+                StringBuilder sb = new StringBuilder("\n═══════════════════════════════\n  Liste des passagers\n═══════════════════════════════\n");
+                for (Passager p : comp.getListePassagers()) sb.append("  ").append(p.afficherDetails()).append("\n");
+                return sb.toString();
+            }
+
+            case "show": {
+                System.out.println("\n── Détails d'un passager ─────────────────");
+                if (comp.getListePassagers().isEmpty()) return "Aucun passager enregistré.";
+                int passport;
+                do {
+                    passport = getIntInput("Numéro de passeport");
+                    if (Passager.checkPassager(comp.getListePassagers(), passport)) break;
+                    System.out.println("  ⚠  Passager introuvable.");
+                } while (true);
+                Passager p = Passager.getPassager(comp.getListePassagers(), passport);
+                StringBuilder sb = new StringBuilder("\n  " + p.afficherDetails() + "\n  Réservations :\n");
+                if (p.reservationsClient.isEmpty()) {
+                    sb.append("    (aucune)\n");
+                } else {
+                    for (NumeroReservation nr : p.reservationsClient) {
+                        if (nr.r != null) sb.append("    ").append(nr.r.afficherDetails()).append("\n");
+                    }
                 }
-            }while (true);
-
-            comp.ajouterVol(param1,param2,0101,Avion.getAvionFromId(comp.getListeAvions(),param3));
-            return "Vol créé";
-
-        } else if (Objects.equals(command, "delete")){
-            do{
-                System.out.println("Entrez le numéro de vol");
-                param3 = getIntInput();
-                Vol.getVol(comp.getListeVols(),param3);
-                break;
-            }while (true);
-
-            comp.supprimerVol(param3);
+                return sb.toString();
+            }
         }
-        return "pb";
+        return "Commande passager inconnue.";
     }
-    public static String comPassager(Compagnie comp, String command){
-        int param1;
-        String param2;
-        String param3;
-        String param4;
 
-        if (Objects.equals(command, "add")){
+    public static String comReservation(Compagnie comp, String command) {
+        switch (command) {
 
+            case "add": {
+                System.out.println("\n── Nouvelle réservation ──────────────────");
+                if (comp.getListeVols().isEmpty())      return "✘  Aucun vol disponible.";
+                if (comp.getListePassagers().isEmpty()) return "✘  Aucun passager enregistré.";
 
-            do {
-                System.out.println("Entrez le numéro de passeport du Passager à ajouter dans la liste de donnée");
-                param1 = getIntInput();
-
-                if (Passager.checkPassager(comp.getListePassagers(),param1)) {
-                    System.out.println("Erreur : Ce numéro de passeport est déjà enregistré.");
-                }else{
+                Vol vol;
+                do {
+                    int volId = getIntInput("Numéro du vol");
+                    vol = Vol.getVol(comp.getListeVols(), volId);
+                    if (vol == null)                     { System.out.println("  ⚠  Vol introuvable."); continue; }
+                    if (vol.getPlacesDisponibles() == 0) { System.out.println("  ⚠  Ce vol est complet."); vol = null; continue; }
                     break;
+                } while (true);
+
+                int passport;
+                do {
+                    passport = getIntInput("Numéro de passeport du passager");
+                    if (Passager.checkPassager(comp.getListePassagers(), passport)) break;
+                    String rep = getStringInput("  Passager introuvable. Créer maintenant ? (o/n)");
+                    if (rep.equalsIgnoreCase("o")) comPassager(comp, "add");
+                } while (!Passager.checkPassager(comp.getListePassagers(), passport));
+
+                System.out.println("  Sièges disponibles pour ce vol :");
+                for (Sieges s : vol.avion.listeSieges) {
+                    if (!s.isReserved()) System.out.println("    " + s);
                 }
-            } while(true);
-
-                System.out.println("Entrez le prénom du passager");
-                param2 = getStringInput();
-
-                System.out.println("Entrez le nom du passager");
-                param3 = getStringInput();
-
-            do {
-
-                System.out.println("Entrez la nationalité du passager");
-                param4 = getStringInput();
-
-                //check natio...
-                break;
-            } while(true);
-
-
-
-            comp.ajouterPassager(param2,param3,param4,param1);
-            return "Passager enregistré";
-
-        } else if (Objects.equals(command, "delete")){
-            do {
-                System.out.println("Entrez le numéro de réservation");
-                param1 = getIntInput();
-
-                if (Reservation.checkReservation(comp.getListeReservations(),param1)) {
+                Sieges siegeChoisi;
+                do {
+                    int siegeNum = getIntInput("Numéro du siège à réserver");
+                    if (siegeNum < 1 || siegeNum > vol.avion.listeSieges.length) {
+                        System.out.println("  ⚠  Numéro de siège invalide (1–" + vol.avion.listeSieges.length + ").");
+                        continue;
+                    }
+                    siegeChoisi = vol.avion.listeSieges[siegeNum - 1];
+                    if (siegeChoisi.isReserved()) { System.out.println("  ⚠  Ce siège est déjà pris."); continue; }
                     break;
-                }else{
-                    System.out.println("Erreur : réservation inconnue, veuillez donner un identifiant valide ");
-                }
-            } while(true);
+                } while (true);
 
-            comp.annulerReservation(Reservation.getNumeroReservation(comp.getListeReservations(),param1));
-            return "Réservation annulée";
+                Passager p    = Passager.getPassager(comp.getListePassagers(), passport);
+                NumeroReservation numR = new NumeroReservation(p, null);
+                boolean ok = comp.AjouterReservation(vol.numeroVol, numR, siegeChoisi);
+                return ok ? "✔  Réservation créée (N°" + numR.id + ")." : "✘  Erreur lors de la réservation.";
+            }
 
+            case "delete": {
+                System.out.println("\n── Annulation d'une réservation ──────────");
+                if (comp.getListeReservations().isEmpty()) return "Aucune réservation enregistrée.";
+                int id;
+                do {
+                    id = getIntInput("Numéro de réservation à annuler");
+                    if (Reservation.CheckReservation(comp.getListeReservations(), id)) break;
+                    System.out.println("  ⚠  Réservation introuvable.");
+                } while (true);
+                NumeroReservation nr = Reservation.getNumeroReservation(comp.getListeReservations(), id);
+                return comp.AnnulerReservation(nr) ? "✔  Réservation annulée." : "✘  Erreur.";
+            }
+
+            case "list": {
+                if (comp.getListeReservations().isEmpty()) return "Aucune réservation enregistrée.";
+                StringBuilder sb = new StringBuilder("\n═══════════════════════════════\n  Liste des réservations\n═══════════════════════════════\n");
+                for (Reservation r : comp.getListeReservations()) sb.append("  ").append(r.afficherDetails()).append("\n");
+                return sb.toString();
+            }
+
+            case "show": {
+                System.out.println("\n── Détails d'une réservation ─────────────");
+                if (comp.getListeReservations().isEmpty()) return "Aucune réservation enregistrée.";
+                int id;
+                do {
+                    id = getIntInput("Numéro de réservation");
+                    if (Reservation.CheckReservation(comp.getListeReservations(), id)) break;
+                    System.out.println("  ⚠  Réservation introuvable.");
+                } while (true);
+                return "\n  " + Reservation.getReservation(comp.getListeReservations(), id).afficherDetails();
+            }
         }
-        return "pb";
+        return "Commande réservation inconnue.";
     }
 }

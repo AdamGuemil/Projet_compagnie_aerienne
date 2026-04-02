@@ -1,46 +1,43 @@
 package CompagnieAerienne;
 
-import java.io.Serial;
+import java.util.ArrayList;
 
 public class Avion {
-    public int id;
-    public Sieges[] listeSieges;
+    public int    id;
     public String modele;
-    public int capacite;
+    public int    capacite;
+    public int    anneeService;
+    public Sieges[] listeSieges;
 
-    public Avion(int id, String modele, int capacite){
-        this.id = id;
-        this.modele = modele;
-        this.capacite = capacite;
+    public Avion(int id, String modele, int capacite,  int anneeService) {
+        this.id           = id;
+        this.modele       = modele;
+        this.capacite     = capacite;
+        this.anneeService = anneeService;
         listeSieges = new Sieges[capacite];
-        int num =0;
-        for (int i = 0; i < listeSieges.length; i++) {
-            listeSieges[i] = new Sieges(num++);
+        for (int i = 0; i < capacite; i++) {
+            listeSieges[i] = new Sieges(i + 1);
         }
     }
 
-    public static boolean checkAvion(Avion[] listeAvions, int id){
+    public int getSiegesDisponibles() {
+        int count = 0;
+        for (Sieges s : listeSieges) if (!s.isReserved()) count++;
+        return count;
+    }
 
-        for (int i=0;i<listeAvions.length;i++){
-            if (listeAvions[i]!=null && listeAvions[i].id == id){
-                return true;
-            }
-        }
+    public String afficherDetails() {
+        return String.format("Avion [ID: %d | Modèle: %s | Capacité: %d | Mise en service: %d | Dispo: %d/%d]",
+                id, modele, capacite, anneeService, getSiegesDisponibles(), capacite);
+    }
+
+    public static boolean CheckAvion(ArrayList<Avion> listeAvions, int id) {
+        for (Avion a : listeAvions) if (a.id == id) return true;
         return false;
     }
 
-    public static Avion getAvionFromId(Avion[] listeAvions, int id){
-        for (int i=0;i<listeAvions.length;i++){
-            if (listeAvions[i].id == id){
-                return listeAvions[i];
-            }
-        }
+    public static Avion getAvionFromId(ArrayList<Avion> listeAvions, int id) {
+        for (Avion a : listeAvions) if (a.id == id) return a;
         return null;
-    }
-
-    //Modification de l'objet mere par defaut avec la methode toString() pour afficher les details de l'avion.
-    @Override
-    public String toString(){
-        return "ID du vol : " + id + ", les sieges occupes : " + listeSieges + ", le modele de l'avion : " + modele + "et sa capacite totale : " +capacite;
     }
 }

@@ -1,133 +1,132 @@
 package CompagnieAerienne;
 
+import java.util.ArrayList;
+
 public class Compagnie {
-    private Vol[] listeVols;
-    private Reservation[] listeReservations;
-    private Avion[] listeAvions;
-    private Passager[] listePassagers;
-
-    public String[] listeNationalitesPossibles = {"FRA","UK","USA"};
-
-
+    private ArrayList<Vol>         listeVols;
+    private ArrayList<Reservation> listeReservations;
+    private ArrayList<Avion>       listeAvions;
+    private ArrayList<Passager>    listePassagers;
 
     public Compagnie() {
-        listeVols         = new Vol[999];
-        listeReservations = new Reservation[999];
-        listeAvions       = new Avion[999];
-        listePassagers    = new Passager[999];
+        listeVols         = new ArrayList<>();
+        listeReservations = new ArrayList<>();
+        listeAvions       = new ArrayList<>();
+        listePassagers    = new ArrayList<>();
     }
 
-    public void ajouterAvion(int id, String modele,int capacite) {
-        for (int i = 0; i < listeAvions.length; i++) {
-            if (listeAvions[i]!=null && listeAvions[i].id == id) {
-                System.out.println("pb, avion existe deja dans la liste");
-                return;
-            }
+    public boolean AjouterAvion(int id, String modele, int capacite, int anneeService) {
+        if (Avion.CheckAvion(listeAvions, id)) {
+            System.out.println("Erreur : un avion avec cet ID existe déjà.");
+            return false;
         }
-
-        for (int i = 0; i < listeAvions.length; i++) {
-            if (listeAvions[i] == null ) {
-                listeAvions[i] = new Avion(id, modele,capacite);
-                System.out.println("avion bien ajoute à la liste");
-                return;
-            }
-        }
+        listeAvions.add(new Avion(id, modele, capacite, anneeService));
+        return true;
     }
 
-    public void supprimerAvion(int id) {
-        for (int i = 0; i < listeAvions.length; i++) {
-            if (listeAvions[i].id == id ) {
-                listeAvions[i] = null;
-                System.out.println("avion bien supprimé de la liste");
-                return;
-            }
-        }
-    }
-
-    public void ajouterVol(String vd, String va,double dd, Avion avion) {
-        for (int i = 0; i < listeVols.length; i++){
-            if(listeVols[i] == null) {
-                listeVols[i] = new Vol(vd,va,dd,avion);
-                System.out.println("vol bien ajoute à la liste");
-                return;
-            }
-        }
-    }
-
-    public void supprimerVol(int id) {
-        for (int i = 0; i < listeVols.length; i++) {
-            if (listeVols[i].numeroVol.id == id ) {
-                listeVols[i] = null;
-                System.out.println("vol bien supprimé de la liste");
-                return;
-            }
-        }
-    }
-
-    public boolean ajouterReservation(NumeroVol numVol,NumeroReservation numReservation,Sieges siegeReserve) {
-        for (int i = 0; i < listeReservations.length; i++) {
-            if (listeReservations[i] !=null && listeReservations[i].numR == numReservation) {
+    public boolean SupprimerAvion(int id) {
+        Avion a = Avion.getAvionFromId(listeAvions, id);
+        if (a == null) { System.out.println("Avion introuvable."); return false; }
+        for (Vol v : listeVols) {
+            if (v.avion == a) {
+                System.out.println("Erreur : cet avion est assigné au vol N°" + v.numeroVol.id + ".");
                 return false;
             }
         }
+        listeAvions.remove(a);
+        return true;
+    }
 
-        for (int i = 0; i < listeReservations.length; i++) {
-            if (listeReservations[i] == null ) {
-                numVol.ajouterReservationAuVol(listeReservations[i]);
-                listeReservations[i] = new Reservation(numVol, numReservation, siegeReserve);
-                return true;
-            }
+    public boolean ModifierAvion(int id, String modele, int capacite, int anneeService) {
+        Avion a = Avion.getAvionFromId(listeAvions, id);
+        if (a == null) { System.out.println("Avion introuvable."); return false; }
+        if (modele      != null) a.modele       = modele;
+        if (capacite     > 0)   a.capacite      = capacite;
+        if (anneeService > 0)   a.anneeService  = anneeService;
+        return true;
+    }
+
+    public boolean AjouterVol(String villeDepart, String villeDestination, String dateDepart, Avion avion) {
+        listeVols.add(new Vol(villeDepart, villeDestination, dateDepart, avion));
+        return true;
+    }
+
+    public boolean SupprimerVol(int id) {
+        Vol v = Vol.getVol(listeVols, id);
+        if (v == null) { System.out.println("Vol introuvable."); return false; }
+        ArrayList<Reservation> aAnnuler = new ArrayList<>();
+        for (Reservation r : listeReservations) {
+            if (r.numV == v.numeroVol) aAnnuler.add(r);
         }
-        return false;
+        for (Reservation r : aAnnuler) AnnulerReservation(r.numR);
+        listeVols.remove(v);
+        return true;
     }
 
-    public boolean annulerReservation(NumeroReservation numReservation) {
-        for (int i = 0; i < numReservation.p.reservationsClient.length; i++) {
-            if (numReservation.p.reservationsClient[i] == numReservation){
-                numReservation.p.reservationsClient[i] = null;
-                break;
-            }
+    public boolean ModifierVol(int id, String villeDepart, String villeDestination, String dateDepart) {
+        Vol v = Vol.getVol(listeVols, id);
+        if (v == null) { System.out.println("Vol introuvable."); return false; }
+        if (villeDepart       != null) v.setVilleDepart(villeDepart);
+        if (villeDestination  != null) v.setVilleDestination(villeDestination);
+        if (dateDepart        != null) v.setDateDepart(dateDepart);
+        return true;
+    }
+
+    public boolean AjouterPassager(String prenom, String nom, String nationalite, int numeroPasseport) {
+        if (Passager.checkPassager(listePassagers, numeroPasseport)) {
+            System.out.println("Erreur : numéro de passeport déjà enregistré.");
+            return false;
         }
+        listePassagers.add(new Passager(prenom, nom, nationalite, numeroPasseport));
+        return true;
+    }
 
-        for (int i = 0; i < numReservation.r.numV.reservations.length; i++) {
-            if (numReservation.r.numV.reservations[i] == numReservation.r){
-                numReservation.r.numV.reservations[i].SiegeReserve.reserveSiege();
-                numReservation.r.numV.reservations[i] = null;
-                break;
-            }
+    public boolean SupprimerPassager(int passport) {
+        Passager p = Passager.getPassager(listePassagers, passport);
+        if (p == null) { System.out.println("Passager introuvable."); return false; }
+        ArrayList<NumeroReservation> aAnnuler = new ArrayList<>(p.reservationsClient);
+        for (NumeroReservation nr : aAnnuler) AnnulerReservation(nr);
+        listePassagers.remove(p);
+        return true;
+    }
+
+    public boolean ModifierPassager(int passport, String prenom, String nom, String nationalite) {
+        Passager p = Passager.getPassager(listePassagers, passport);
+        if (p == null) { System.out.println("Passager introuvable."); return false; }
+        if (prenom      != null) p.setPrenom(prenom);
+        if (nom         != null) p.setNom(nom);
+        if (nationalite != null) p.setNationalite(nationalite);
+        return true;
+    }
+
+    public boolean AjouterReservation(NumeroVol numVol, NumeroReservation numReservation, Sieges siegeReserve) {
+        if (siegeReserve.isReserved()) {
+            System.out.println("Erreur : ce siège est déjà réservé.");
+            return false;
         }
-
-        for (int i = 0; i < listeReservations.length; i++) {
-            if (listeReservations[i].numR == numReservation){
-                listeReservations[i].numV.supprimerReservationAuVol(listeReservations[i]);
-                listeReservations[i] = null;
-                break;
-            }
+        if (numVol.vol.getPlacesDisponibles() == 0) {
+            System.out.println("Erreur : le vol est complet.");
+            return false;
         }
-        return false;
+        Reservation r = new Reservation(numVol, numReservation, siegeReserve);
+        listeReservations.add(r);
+        numVol.AjouterReservationAuVol(r);
+        return true;
     }
 
-    public void ajouterPassager(String p,String n, String N,int nP) {
-
-        for (int i = 0; i < listePassagers.length; i++) {
-            if (listePassagers[i] == null ) {
-                listePassagers[i] = new Passager(p,n,N,nP);
-                return;
-            }
-        }
+    public boolean AnnulerReservation(NumeroReservation numReservation) {
+        if (numReservation == null || numReservation.r == null) return false;
+        Reservation resa = numReservation.r;
+        resa.siegeReserve.libereSiege();
+        resa.active = false;
+        numReservation.p.reservationsClient.remove(numReservation);
+        resa.numV.SupprimerReservationAuVol(resa);
+        listeReservations.remove(resa);
+        return true;
     }
 
-    public Vol[] getListeVols(){
-        return listeVols;
-    }
-    public Passager[] getListePassagers(){
-        return listePassagers;
-    }
-    public Reservation[] getListeReservations(){
-        return listeReservations;
-    }
-    public Avion[] getListeAvions(){
-        return listeAvions;
-    }
-
+    public ArrayList<Vol>         getListeVols()          { return listeVols; }
+    public ArrayList<Passager>    getListePassagers()     { return listePassagers; }
+    public ArrayList<Reservation> getListeReservations()  { return listeReservations; }
+    public ArrayList<Avion>       getListeAvions()        { return listeAvions; }
 }

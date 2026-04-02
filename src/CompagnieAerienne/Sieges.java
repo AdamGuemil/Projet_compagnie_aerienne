@@ -1,35 +1,22 @@
 package CompagnieAerienne;
 
-import java.io.SequenceInputStream;
-import java.util.Objects;
-
 public class Sieges {
     private int numeroSiege;
     private boolean reserve;
 
-    public Sieges(int numeroSiege){ // COnstructeur de la classe Siege
+    public Sieges(int numeroSiege) {
         this.numeroSiege = numeroSiege;
+        this.reserve = false;
     }
 
-    // Getter et setter pour la classe Sieges
+    public int getNumeroSiege() { return numeroSiege; }
+    public boolean isReserved()  { return reserve; }
 
-    // Getter et setter pour numeroSiege
-    public void setNumeroSiege(int numeroSiege) {
-        this.numeroSiege = numeroSiege;
-    }
+    public void reserveSiege() { this.reserve = true;  }
+    public void libereSiege()  { this.reserve = false; }
 
-    public int getNumeroSiege() {
-        return numeroSiege;
-    }
-
-    public void reserveSiege() {
-        reserve =!reserve;
-    }
-
-
-    //Modification de l'objet mere par defaut avec la methode toString() pour afficher les details du vol.
     @Override
-    public String toString(){
-        return "Numero de siege : " + numeroSiege + "et statut de la place : " + reserve;
+    public String toString() {
+        return "Siège " + numeroSiege + (reserve ? " [Réservé]" : " [Disponible]");
     }
 }

@@ -1,50 +1,49 @@
-//TODO faudrait rajouter import java.time.LocalDate pour pouvoir un systeme de resa qui se calle avec l'heure et la date
-
 package CompagnieAerienne;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 public class Reservation {
     public NumeroReservation numR;
-    public NumeroVol numV;
-    Sieges SiegeReserve;
-    public int DateReservation;
+    public NumeroVol         numV;
+    public Sieges            siegeReserve;
+    public String            dateReservation;
+    public boolean           active;
 
-    public Reservation(NumeroVol numV,NumeroReservation numR,Sieges SiegeReserve){
+    public Reservation(NumeroVol numV, NumeroReservation numR, Sieges siegeReserve) {
         numR.r = this;
-        this.numR = numR;
-        this.numV = numV;
-        SiegeReserve.reserveSiege();
-        this.SiegeReserve = SiegeReserve;
+        this.numR  = numR;
+        this.numV  = numV;
+        siegeReserve.reserveSiege();
+        this.siegeReserve = siegeReserve;
+        this.dateReservation = LocalDate.now().toString();
+        this.active = true;
+        numR.p.reservationsClient.add(numR);
     }
 
-    public static boolean checkReservation(Reservation[] listeReservations, int id){
-        for (int i=0;i<listeReservations.length;i++){
-            if (listeReservations[i].numR.id == id){
-                return true;
-            }
-        }
+    public String afficherDetails() {
+        return String.format(
+            "Réservation [N°: %d | Vol: %d | Passager: %s %s | Siège: %d | Date: %s | Statut: %s]",
+            numR.id, numV.id,
+            numR.p.prenom, numR.p.nom,
+            siegeReserve.getNumeroSiege(),
+            dateReservation,
+            active ? "Active" : "Annulée"
+        );
+    }
+
+    public static boolean CheckReservation(ArrayList<Reservation> listeReservations, int id) {
+        for (Reservation r : listeReservations) if (r.numR.id == id) return true;
         return false;
     }
 
-    public static NumeroReservation getNumeroReservation(Reservation[] listeReservations, int id){
-        for (int i=0;i<listeReservations.length;i++){
-            if (listeReservations[i].numR.id == id){
-                return listeReservations[i].numR;
-            }
-        }
+    public static Reservation getReservation(ArrayList<Reservation> listeReservations, int id) {
+        for (Reservation r : listeReservations) if (r.numR.id == id) return r;
         return null;
     }
 
-    public static int makeReservation(){
-        Scanner mySeat = new Scanner(System.in);
-        System.out.println("Veuillez reserver une place, s'il-vous-plait");// Dans notre cas, on considere qu'on reserve une place aleatorie
-
-        int seatTaken = mySeat.nextInt(); //Lit la valeur prise par l'utilisateur
-
-        System.out.println("Merci, votre reservation a bien ete prise en compte.");
-        return 0;
+    public static NumeroReservation getNumeroReservation(ArrayList<Reservation> listeReservations, int id) {
+        for (Reservation r : listeReservations) if (r.numR.id == id) return r.numR;
+        return null;
     }
 }
